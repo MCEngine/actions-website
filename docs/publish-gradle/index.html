@@ -9,73 +9,88 @@
 <body>
   <div id="theme-toggle-container"></div>
 
-  <h1>🧪 Reusable GitHub Workflow: <code>publish-gradle.yml</code></h1>
+  <main>
+    <header>
+      <h1>🧪 Reusable GitHub Workflow: <code>publish-gradle.yml</code></h1>
+    </header>
 
-  <div class="card">
-    <p>This GitHub Actions workflow is designed to <strong>automatically publish a Gradle project to GitHub Packages</strong> every day, using a versioning format based on the current date.</p>
-  </div>
+    <section class="card">
+      <p>This GitHub Actions workflow <strong>automates publishing Gradle projects to GitHub Packages</strong> using a daily versioning strategy based on the current Bangkok timezone date. It updates version keys, runs a Gradle publish, tags the release, and prepares the next day's development version (unless it's the first of the month).</p>
+    </section>
 
-  <h2>🔁 Purpose</h2>
-  <div class="card">
-    <ul>
-      <li>Reusable and callable from multiple repositories</li>
-      <li>Calculates version based on UTC date</li>
-      <li>Validates all <code>mcengine(-name)-(api|common).version</code> entries in <code>gradle.properties</code></li>
-      <li>Fails if version format does not match expected</li>
-      <li>Publishes to GitHub Packages with Gradle</li>
-    </ul>
-  </div>
+    <section>
+      <h2>🔁 Purpose</h2>
+      <article class="card">
+        <ul>
+          <li>Reusable workflow callable from multiple repositories</li>
+          <li>Versions follow <code>YYYY.M.D[-day]</code> format using Asia/Bangkok timezone</li>
+          <li>Automatically bumps version for next day (except on day 1)</li>
+          <li>Validates and updates all <code>mcengine(-name)-(api|common).version</code> entries in <code>gradle.properties</code></li>
+          <li>Publishes artifacts via Gradle to GitHub Packages</li>
+          <li>Creates a GitHub release with tag and changelog</li>
+        </ul>
+      </article>
+    </section>
 
-  <h2>⚙️ Inputs</h2>
-  <div class="card">
-    <table>
-      <thead>
-        <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
-      </thead>
-      <tbody>
-        <tr><td><code>repo-name</code></td><td>string</td><td>✅ Yes</td><td>Full GitHub repo name (e.g. <code>owner/repo</code>)</td></tr>
-      </tbody>
-    </table>
-  </div>
+    <section>
+      <h2>⚙️ Inputs</h2>
+      <article class="card">
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>repo-name</code></td><td>string</td><td>✅ Yes</td><td>Full GitHub repo name (e.g. <code>owner/repo</code>)</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
 
-  <h2>🔐 Secrets</h2>
-  <div class="card">
-    <table>
-      <thead>
-        <tr><th>Name</th><th>Required</th><th>Description</th></tr>
-      </thead>
-      <tbody>
-        <tr><td><code>GITHUB_TOKEN</code></td><td>✅ Yes</td><td>GitHub token with <code>write:packages</code> permission</td></tr>
-      </tbody>
-    </table>
-  </div>
+    <section>
+      <h2>🔐 Secrets</h2>
+      <article class="card">
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Required</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>USER_GITHUB_TOKEN</code></td><td>✅ Yes</td><td>GitHub token with permission to push commits, tags, and create releases</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
 
-  <h2>🧪 Example Usage</h2>
-  <div class="card">
-    <p>Use this in another repo to call the reusable workflow:</p>
-    <pre><code>jobs:
+    <section>
+      <h2>🧪 Example Usage</h2>
+      <article class="card">
+        <p>Call this workflow from another repository like this:</p>
+        <pre><code>jobs:
   publish:
     uses: MCEngine/actions/.github/workflows/publish-gradle.yml@master
     with:
       repo-name: ${{ github.repository }}
     secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}</code></pre>
-    <p>This will call the centralized workflow hosted at <strong>MCEngine/actions</strong>.</p>
-  </div>
+      USER_GITHUB_TOKEN: ${{ secrets.USER_GITHUB_TOKEN }}</code></pre>
+        <p>This setup lets you centralize and reuse publishing logic from the <strong>MCEngine/actions</strong> repository.</p>
+      </article>
+    </section>
 
-  <h2>📦 Repository Requirements</h2>
-  <div class="card">
-    <ul>
-      <li>Include a valid <code>gradle.properties</code> with version keys</li>
-      <li>Configure <code>publishing</code> block in <code>build.gradle</code> to use GitHub Packages</li>
-      <li>Use environment variables:
+    <section>
+      <h2>📦 Repository Requirements</h2>
+      <article class="card">
         <ul>
-          <li><code>GITHUB_USERNAME = ${{ github.actor }}</code></li>
-          <li><code>GITHUB_TOKEN = ${{ secrets.GITHUB_TOKEN }}</code></li>
+          <li>A valid <code>gradle.properties</code> with version keys like <code>mcengine.api.version</code>, <code>mcengine-common.version</code>, etc.</li>
+          <li>A configured <code>publishing</code> block in <code>build.gradle</code> pointing to GitHub Packages</li>
+          <li>Environment variables needed by Gradle:
+            <ul>
+              <li><code>GITHUB_USERNAME = ${{ github.actor }}</code></li>
+              <li><code>GITHUB_TOKEN = ${{ secrets.USER_GITHUB_TOKEN }}</code></li>
+            </ul>
+          </li>
         </ul>
-      </li>
-    </ul>
-  </div>
+      </article>
+    </section>
+  </main>
 
   <script src="../script.js"></script>
 </body>
